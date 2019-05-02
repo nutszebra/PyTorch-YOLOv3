@@ -172,6 +172,7 @@ if __name__ == "__main__":
                 nms_thres=0.5,
                 img_size=opt.img_size,
                 batch_size=8,
+                gpu=gpu
             )
             evaluation_metrics = [
                 ("val_precision", precision.mean()),
