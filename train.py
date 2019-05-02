@@ -104,9 +104,11 @@ if __name__ == "__main__":
         for batch_i, (_, imgs, targets) in enumerate(dataloader):
             batches_done = len(dataloader) * epoch + batch_i
 
-            imgs = Variable(imgs.cuda(gpu))
-            targets = Variable(targets.cuda(gpu), requires_grad=False)
+            imgs = Variable(imgs).cuda(gpu)
+            targets = Variable(targets, requires_grad=False).cuda(gpu)
 
+            import IPython
+            IPython.embed()
             loss, outputs = model(imgs, targets)
             loss.backward()
 
