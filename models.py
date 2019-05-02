@@ -139,7 +139,6 @@ class YOLOLayer(nn.Module):
 
     def forward(self, x, targets=None, img_dim=None):
 
-        gpu = x.device.index
         # Tensors for cuda support
         FloatTensor = torch.cuda.FloatTensor if x.is_cuda else torch.FloatTensor
         LongTensor = torch.cuda.LongTensor if x.is_cuda else torch.LongTensor
