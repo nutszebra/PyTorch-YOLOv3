@@ -1,6 +1,7 @@
 from PIL import ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = Trueimport glob
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+import glob
 import random
 import os
 import sys
