@@ -14,13 +14,16 @@ class Conv2d(NN):
 
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=None, ratio=0.0):
         super(Conv2d, self).__init__()
-        self.conv = Conv(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding, bias=bias)
+        _conv = Conv(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding, bias=bias)
+        self.weight_initialization(_conv)
+        self.weight = _conv.weight
+        self.bias = _conv.bias
+        self.stride, self.padding = stride, padding
         self.ratio = ratio
-        self.weight_initialization()
 
-    def weight_initialization(self):
-        init.xavier_uniform_(self.conv.weight, gain=np.sqrt(2))
-        if self.conv.bias is not None:
+    def weight_initialization(self, conv):
+        init.xavier_uniform_(conv.weight, gain=np.sqrt(2))
+        if conv.bias is not None:
             init.constant_(self.conv.bias, 0)
 
     def create_shuffle_indices(self, x):
@@ -42,7 +45,7 @@ class Conv2d(NN):
         if hasattr(self, 'random_indices') is False:
             self.create_shuffle_indices(x)
         x = self.shuffle(x)
-        return self.conv(x)
+        return torch.nn.functional.conv2d(x, self.weight, bias=self.bias, stride=self.stride, padding=self.padding)
 
 
 if __name__ == '__main__':
