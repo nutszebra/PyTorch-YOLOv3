@@ -59,7 +59,6 @@ if __name__ == "__main__":
     x = Variable(torch.randn(1, 3, opt.img_size, opt.img_size))
     model(x)
     model = model.to(device)
-    model.apply(weights_init_normal)
 
     # If specified we start from checkpoint
     if opt.pretrained_weights:
