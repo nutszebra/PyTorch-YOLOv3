@@ -12,9 +12,9 @@ except:
 
 class Conv2d(NN):
 
-    def __init__(self, in_planes, out_planes, kernel_size=3, stride=1, padding=1, bias=None, ratio=0.1):
+    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=None, ratio=0.1):
         super(Conv2d, self).__init__()
-        self.conv = Conv(in_planes, out_planes, kernel_size=kernel_size, stride=stride, padding=padding, bias=bias)
+        self.conv = Conv(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding, bias=bias)
         self.ratio = ratio
         self.weight_initialization()
 
