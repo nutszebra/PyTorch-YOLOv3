@@ -24,7 +24,7 @@ class Conv2d(NN):
     def weight_initialization(self, conv):
         init.xavier_uniform_(conv.weight, gain=np.sqrt(2))
         if conv.bias is not None:
-            init.constant_(self.conv.bias, 0)
+            init.constant_(conv.bias, 0)
 
     def create_shuffle_indices(self, x):
         _, in_planes, height, width = x.size()
