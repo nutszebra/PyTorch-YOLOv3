@@ -107,6 +107,8 @@ if __name__ == "__main__":
             imgs = Variable(imgs).cuda(gpu)
             targets = Variable(targets, requires_grad=False).cuda(gpu)
 
+            import IPython
+            IPython.embed()
             loss, outputs = model(imgs, targets)
             loss.backward()
 
