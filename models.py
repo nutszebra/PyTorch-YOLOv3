@@ -35,7 +35,7 @@ def create_modules(module_defs):
             pad = (kernel_size - 1) // 2
             modules.add_module(
                 f"conv_{module_i}",
-                nn.Conv2d(
+                Conv2d(
                     in_channels=output_filters[-1],
                     out_channels=filters,
                     kernel_size=kernel_size,
