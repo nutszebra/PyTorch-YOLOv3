@@ -26,6 +26,7 @@ import torch.optim as optim
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--gpu", type=int, default=0, help="gpu id")
     parser.add_argument("--epochs", type=int, default=160, help="number of epochs")
     parser.add_argument("--batch_size", type=int, default=10, help="size of each image batch")
     parser.add_argument("--gradient_accumulations", type=int, default=1, help="number of gradient accums before step")
@@ -42,8 +43,7 @@ if __name__ == "__main__":
     print(opt)
 
     logger = Logger("logs")
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    gpu = opt.gpu
 
     os.makedirs("output", exist_ok=True)
     os.makedirs("checkpoints", exist_ok=True)
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     model = Darknet(opt.model_def)
     x = Variable(torch.randn(1, 3, opt.img_size, opt.img_size))
     model(x)
-    model = model.to(device)
+    model = model.cuda(gpu)
 
     # If specified we start from checkpoint
     if opt.pretrained_weights:
@@ -104,8 +104,8 @@ if __name__ == "__main__":
         for batch_i, (_, imgs, targets) in enumerate(dataloader):
             batches_done = len(dataloader) * epoch + batch_i
 
-            imgs = Variable(imgs.to(device))
-            targets = Variable(targets.to(device), requires_grad=False)
+            imgs = Variable(imgs.cuda(gpu))
+            targets = Variable(targets.cuda(gpu), requires_grad=False)
 
             loss, outputs = model(imgs, targets)
             loss.backward()
