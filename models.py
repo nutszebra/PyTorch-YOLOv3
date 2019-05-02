@@ -255,17 +255,11 @@ class Darknet(nn.Module):
         for i, (module_def, module) in enumerate(zip(self.module_defs, self.module_list)):
             if module_def["type"] in ["convolutional", "upsample", "maxpool"]:
                 x = module(x)
-                import IPython
-                IPython.embed()
             elif module_def["type"] == "route":
                 x = torch.cat([layer_outputs[int(layer_i)] for layer_i in module_def["layers"].split(",")], 1)
-                import IPython
-                IPython.embed()
             elif module_def["type"] == "shortcut":
                 layer_i = int(module_def["from"])
                 x = layer_outputs[-1] + layer_outputs[layer_i]
-                import IPython
-                IPython.embed()
             elif module_def["type"] == "yolo":
                 x, layer_loss = module[0](x, targets, img_dim)
                 loss += layer_loss
