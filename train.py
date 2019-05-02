@@ -16,6 +16,7 @@ import sys
 import time
 import datetime
 import argparse
+from tqdm import tqdm
 
 import torch
 from torch.utils.data import DataLoader
@@ -23,6 +24,14 @@ from torchvision import datasets
 from torchvision import transforms
 from torch.autograd import Variable
 import torch.optim as optim
+
+
+def create_progressbar(end, desc='', stride=1, start=0, dynamic_ncols=True, ncols=80):
+    if type(end) is int or type(end) is float:
+        return tqdm(range(int(start), int(end), int(stride)), desc=desc, leave=False, ncols=ncols)
+    else:
+        return tqdm(end, desc=desc, leave=False, ncols=ncols)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -101,7 +110,7 @@ if __name__ == "__main__":
     for epoch in range(opt.epochs):
         model.train()
         start_time = time.time()
-        for batch_i, (_, imgs, targets) in enumerate(dataloader):
+        for batch_i, (_, imgs, targets) in zip(create_progressbar(len(dataloader), desc='train'), dataloader):
             batches_done = len(dataloader) * epoch + batch_i
 
             imgs = Variable(imgs).cuda(gpu)
