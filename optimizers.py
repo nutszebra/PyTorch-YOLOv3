@@ -1,8 +1,6 @@
 import math
 import numpy as np
 import torch.optim as optim
-from .utility import write
-from . import adamw
 
 
 class FakeOptimizer(object):
