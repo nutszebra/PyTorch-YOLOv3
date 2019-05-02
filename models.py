@@ -12,6 +12,11 @@ from utils.utils import build_targets, to_cpu, non_max_suppression
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+try:
+    from .shuffle_conv import Conv2d
+except:
+    from shuffle_conv import Conv2d
+
 
 def create_modules(module_defs):
     """
