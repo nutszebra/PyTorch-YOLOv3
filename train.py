@@ -7,6 +7,8 @@ from utils.datasets import *
 from utils.parse_config import *
 from test import evaluate
 
+from optimizers import MomentumSGD
+
 from terminaltables import AsciiTable
 
 import os
@@ -24,9 +26,9 @@ import torch.optim as optim
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--epochs", type=int, default=100, help="number of epochs")
-    parser.add_argument("--batch_size", type=int, default=8, help="size of each image batch")
-    parser.add_argument("--gradient_accumulations", type=int, default=2, help="number of gradient accums before step")
+    parser.add_argument("--epochs", type=int, default=160, help="number of epochs")
+    parser.add_argument("--batch_size", type=int, default=10, help="size of each image batch")
+    parser.add_argument("--gradient_accumulations", type=int, default=1, help="number of gradient accums before step")
     parser.add_argument("--model_def", type=str, default="config/yolov3.cfg", help="path to model definition file")
     parser.add_argument("--data_config", type=str, default="config/coco.data", help="path to data config file")
     parser.add_argument("--pretrained_weights", type=str, help="if specified starts from checkpoint model")
@@ -35,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint_interval", type=int, default=1, help="interval between saving model weights")
     parser.add_argument("--evaluation_interval", type=int, default=1, help="interval evaluations on validation set")
     parser.add_argument("--compute_map", default=False, help="if True computes mAP every tenth batch")
-    parser.add_argument("--multiscale_training", default=True, help="allow for multi-scale training")
+    parser.add_argument("--multiscale_training", default=False, help="allow for multi-scale training")
     opt = parser.parse_args()
     print(opt)
 
@@ -53,7 +55,10 @@ if __name__ == "__main__":
     class_names = load_classes(data_config["names"])
 
     # Initiate model
-    model = Darknet(opt.model_def).to(device)
+    model = Darknet(opt.model_def)
+    x = Variable(torch.randn(1, 3, opt.img_size, opt.img_size))
+    model(x)
+    model = model.to(device)
     model.apply(weights_init_normal)
 
     # If specified we start from checkpoint
@@ -74,7 +79,8 @@ if __name__ == "__main__":
         collate_fn=dataset.collate_fn,
     )
 
-    optimizer = torch.optim.Adam(model.parameters())
+    # optimizer = torch.optim.Adam(model.parameters())
+    optimizer = MomentumSGD(model, lr=1.0e-3, momentum=0.9, schedule=[60, 90], weight_decay=5.0e-4)
 
     metrics = [
         "grid_size",
@@ -143,7 +149,7 @@ if __name__ == "__main__":
             time_left = datetime.timedelta(seconds=epoch_batches_left * (time.time() - start_time) / (batch_i + 1))
             log_str += f"\n---- ETA {time_left}"
 
-            print(log_str)
+            # print(log_str)
 
             model.seen += imgs.size(0)
 
